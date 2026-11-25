@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Passly • Ловушки ОГЭ 2027</title>
+  <script async src="https://telegram.org/js/telegram-web-app.js" onload="window.Telegram?.WebApp?.ready(); window.Telegram?.WebApp?.expand();"></script>
+  <link rel="stylesheet" href="styles.css?v=8" />
+</head>
+<body>
+  <div class="app">
+    <header class="header">
+      <div class="brand">
+        <div class="avatar" id="avatarBox">
+          <img id="headerAvatarImg" src="passly.jpg" alt="Passly" />
+        </div>
+        <div>
+          <div class="brand-title-row">
+            <span class="brand-title">Passly</span>
+            <button class="pro-pill" id="proHeaderBtn" title="Подписка Passly PRO">PRO</button>
+          </div>
+          <div class="brand-sub">ОГЭ • ФИПИ 2027</div>
+        </div>
+      </div>
+      <div class="header-right">
+        <div class="stats-pill" id="statsPill"></div>
+        <button class="icon-btn" id="themeToggleBtn" title="Сменить тему"></button>
+        <button class="icon-btn" id="openTourBtn" title="Обучение"></button>
+        <button class="icon-btn" id="openCalibBtn" title="Калибровка"></button>
+      </div>
+    </header>
+
+    <div class="mascot-box" id="mascotBox">
+      <div class="mascot-face" id="mascotFace">
+        <img id="mascotFaceImg" src="passly.jpg" alt="Пасли" />
+      </div>
+      <span id="mascotMsg">Сделай 10 правильных ответов за день, чтобы зажечь огонёк стрика.</span>
+    </div>
+
+    <!-- ВКЛАДКА 1: ПРАКТИКА -->
+    <main id="practiceView">
+      <div id="setupScreen">
+        <div class="bento" id="bentoGrid">
+          <div class="bento-card">
+            <span class="bento-label">Цель дня (стрик)</span>
+            <div class="bento-val"><span id="dailyCount">0</span> / 10</div>
+            <div class="mini-bar"><div class="mini-bar-fill fill-orange" id="dailyBar"></div></div>
+            <span class="bento-sub" id="dailyHint">Ещё 10 до огонька</span>
+          </div>
+          <button type="button" class="bento-card bento-clickable" id="forecastTrigger">
+            <div class="bento-top-row">
+              <span class="bento-label" id="rankLevelLabel">Ранг 1 / 12</span>
+              <span class="forecast-chip" id="forecastBadge">Прогноз</span>
+            </div>
+            <div class="bento-val" id="rankName">Недопуск</div>
+            <div class="mini-bar"><div class="mini-bar-fill fill-purple" id="rankBar"></div></div>
+            <span class="bento-sub" id="rankHint">0 / 60 XP • Карта ОГЭ</span>
+          </button>
+        </div>
+
+        <div class="limit-strip" id="freeLimitStrip"></div>
+
+        <div class="hooks-stack">
+          <button class="hook-banner hook-daily" id="dailyTrapBtn">
+            <div>
+              <div class="hook-title" id="dailyTrapTitle">Ловушка дня (15 сек)</div>
+              <div class="hook-sub" id="dailyTrapSub">Хард-вопрос на скорость • +15 XP</div>
+            </div>
+            <span class="hook-badge" id="dailyTrapBadge">СТАРТ</span>
+          </button>
+
+          <button class="hook-banner hook-mistakes hidden" id="mistakesBtn">
+            <div>
+              <div class="hook-title" id="mistakesTitle">Мои завалы</div>
+              <div class="hook-sub">Перерешай ошибки, чтобы они исчезли</div>
+            </div>
+            <span class="hook-badge" id="mistakesCountBadge">0 шт.</span>
+          </button>
+        </div>
+
+        <div id="builderSection">
+          <div class="setup-head">
+            <span class="setup-title">Собери тренировку (- / +)</span>
+            <button class="toggle-all-btn" id="toggleAllBtn">Сбросить все</button>
+          </div>
+          <div class="task-list" id="taskList"></div>
+        </div>
+
+        <div class="actions-stack">
+          <button class="btn-primary" id="startSelectedBtn">Начать раунд</button>
+          <button class="btn-shuffle" id="startShuffleBtn">Вперемешку (все задания)</button>
+        </div>
+      </div>
+
+      <div id="quizScreen" class="hidden">
+        <div class="quiz-topbar">
+          <button class="back-btn" id="backToSetupBtn">Назад</button>
+          <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+          <span class="combo-pill hidden" id="comboBadge">x2</span>
+          <span class="timer-pill hidden" id="timerBadge">15с</span>
+          <span class="counter-muted" id="counterText">0/0</span>
+        </div>
+        <section class="card" id="cardArea"></section>
+      </div>
+    </main>
+
+    <!-- ВКЛАДКА 2: ШПОРЫ -->
+    <section id="theoryView" class="hidden">
+      <div class="sub-tabs-3">
+        <button class="sub-tab active" id="subStories">Сторис</button>
+        <button class="sub-tab" id="subFlash">Флеш</button>
+        <button class="sub-tab" id="subXray">Рентген</button>
+      </div>
+
+      <div id="storiesPane">
+        <div class="weak-strip hidden" id="weakTheoryStrip"></div>
+        <div class="story-pills" id="storyPills"></div>
+        <div class="story-card" id="storyCard"></div>
+      </div>
+
+      <div id="flashPane" class="hidden">
+        <div id="flashDeckPicker"></div>
+        <div id="flashDeckPlay" class="hidden">
+          <div class="flash-play-top">
+            <button class="back-btn" id="backToDecksBtn">Колоды</button>
+            <span class="flash-deck-name" id="activeDeckTitle"></span>
+            <span class="counter-muted" id="flashProgressText"></span>
+          </div>
+          <div id="flashStage"></div>
+        </div>
+      </div>
+
+      <div id="xrayPane" class="hidden">
+        <div class="xray-cats" id="xrayCats"></div>
+        <div class="xray-card" id="xrayCard"></div>
+      </div>
+    </section>
+
+    <!-- ВКЛАДКА 3: ВАРИАНТ -->
+    <section id="examView" class="hidden">
+      <div id="examSetup">
+        <div class="exam-hero">
+          <div>
+            <div class="exam-hero-title">Вариант ОГЭ-2027 • Банк ФИПИ</div>
+            <div class="exam-hero-sub" id="examLimitNote">
+              Табличка А Б В, плитки цифр без лишней клавиатуры и реальный бланк № 1. Верные ответы идут в стрик.
+            </div>
+          </div>
+          <button class="btn-primary" id="startFullExamBtn">Собрать полный вариант (№ 2–12)</button>
+        </div>
+
+        <div class="setup-head">
+          <span class="setup-title" id="examCustomTitle">Конструктор мини-варианта (- / +)</span>
+          <button class="toggle-all-btn" id="toggleExamAllBtn">Сбросить все</button>
+        </div>
+        <div class="task-list" id="examTaskList"></div>
+
+        <div class="actions-stack">
+          <button class="btn-purple" id="startCustomExamBtn">Решать выбранные</button>
+        </div>
+      </div>
+
+      <div id="examSolve" class="hidden">
+        <div class="exam-topbar">
+          <button class="back-btn" id="backToExamSetupBtn">Варианты</button>
+          <span class="exam-mode-label" id="examModeLabel">Полный вариант</span>
+          <span class="exam-timer" id="examTimer">00:00</span>
+        </div>
+
+        <div id="examSummary" class="exam-summary hidden"></div>
+        <div id="examQuestionsContainer"></div>
+
+        <div class="actions-stack">
+          <button class="btn-primary" id="checkExamBtn">Проверить бланк</button>
+          <button class="btn-shuffle hidden" id="newExamBtn">Собрать новый вариант</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Модалки -->
+  <div class="overlay hidden" id="calibOverlay"><div class="modal pop" id="calibModal"></div></div>
+  <div class="overlay hidden" id="dailyReviewOverlay"><div class="modal pop" id="dailyReviewModal"></div></div>
+  <div class="overlay hidden" id="forecastOverlay"><div class="modal modal-scroll pop" id="forecastModal"></div></div>
+  <div class="overlay overlay-sheet hidden" id="proOverlay"><div class="sheet pop" id="proModal"></div></div>
+
+  <!-- Контекстный Spotlight-тур -->
+  <div class="tour-backdrop hidden" id="tourBackdrop">
+    <div class="tour-ring" id="tourRing"></div>
+    <div class="tour-card pop" id="tourCard"></div>
+  </div>
+
+  <!-- Полноэкранный стрик 10/10 -->
+  <div class="streak-fullscreen hidden" id="streakOverlay">
+    <div class="streak-stage pop">
+      <div class="streak-flame-big" id="streakFlameBig"></div>
+      <div class="streak-mascot-ring" id="streakMascotRing">
+        <img id="streakMascotImg" src="passly_happy.jpg" alt="Пасли празднует" />
+      </div>
+      <div class="streak-kicker">Цель дня 10 / 10 закрыта!</div>
+      <div class="streak-big-num" id="streakBigTitle">СТРИК: 1 ДЕНЬ!</div>
+      <div class="streak-desc">
+        Пасли в диком восторге! Огонёк зажжён, а в копилку упал бонус <b>+25 XP</b>.
+      </div>
+      <button class="streak-btn-light" id="closeStreakOverlayBtn">Продолжить</button>
+    </div>
+  </div>
+
+  <nav class="bottom-nav" id="bottomNav">
+    <button class="nav-btn active" id="tabPractice">Практика</button>
+    <button class="nav-btn" id="tabTheory">Шпоры</button>
+    <button class="nav-btn" id="tabExam">Вариант</button>
+  </nav>
+
+  <script src="config.js?v=8"></script>
+  <script src="theory.js?v=8"></script>
+  <script src="exam.js?v=8"></script>
+  <script src="app.js?v=8"></script>
+</body>
+</html>
